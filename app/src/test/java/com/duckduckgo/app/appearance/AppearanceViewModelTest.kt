@@ -221,7 +221,7 @@ internal class AppearanceViewModelTest {
     @Test
     fun whenOmnibarPositionUpdatedToBottom() =
         runTest {
-            testee.setOmnibarType(OmnibarType.SINGLE_BOTTOM)
+            testee.onOmnibarTypeSelected(OmnibarType.SINGLE_BOTTOM)
             verify(mockAppSettingsDataStore).omnibarType = OmnibarType.SINGLE_BOTTOM
             verify(mockPixel).fire(AppPixelName.SETTINGS_ADDRESS_BAR_POSITION_SELECTED_BOTTOM)
         }
@@ -229,7 +229,7 @@ internal class AppearanceViewModelTest {
     @Test
     fun whenOmnibarPositionUpdatedToTop() =
         runTest {
-            testee.setOmnibarType(OmnibarType.SINGLE_TOP)
+            testee.onOmnibarTypeSelected(OmnibarType.SINGLE_TOP)
             verify(mockAppSettingsDataStore).omnibarType = OmnibarType.SINGLE_TOP
             verify(mockPixel).fire(AppPixelName.SETTINGS_ADDRESS_BAR_POSITION_SELECTED_TOP)
         }

@@ -193,7 +193,6 @@ interface AndroidBrowserConfigFeature {
     @Toggle.DefaultValue(TRUE)
     fun useUnifiedOmnibarLayout(): Toggle
 
-    @Toggle.DefaultValue(FALSE)
-    @Toggle.InternalAlwaysEnabled
+    @Toggle.DefaultValue(TRUE)
     fun splitOmnibar(): Toggle
 }

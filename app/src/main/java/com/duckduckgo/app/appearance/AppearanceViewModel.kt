@@ -25,6 +25,7 @@ import com.duckduckgo.app.pixels.AppPixelName
 import com.duckduckgo.app.pixels.AppPixelName.SETTINGS_THEME_TOGGLED_DARK
 import com.duckduckgo.app.pixels.AppPixelName.SETTINGS_THEME_TOGGLED_LIGHT
 import com.duckduckgo.app.pixels.AppPixelName.SETTINGS_THEME_TOGGLED_SYSTEM_DEFAULT
+import com.duckduckgo.app.pixels.remoteconfig.AndroidBrowserConfigFeature
 import com.duckduckgo.app.settings.db.SettingsDataStore
 import com.duckduckgo.app.statistics.pixels.Pixel
 import com.duckduckgo.app.tabs.store.TabSwitcherDataStore
@@ -55,6 +56,7 @@ class AppearanceViewModel @Inject constructor(
     private val pixel: Pixel,
     private val dispatcherProvider: DispatcherProvider,
     private val tabSwitcherDataStore: TabSwitcherDataStore,
+    private val browserFeatureFlags: AndroidBrowserConfigFeature,
 ) : ViewModel() {
     data class ViewState(
         val theme: DuckDuckGoTheme = DuckDuckGoTheme.LIGHT,
@@ -65,6 +67,7 @@ class AppearanceViewModel @Inject constructor(
         val omnibarType: OmnibarType = OmnibarType.SINGLE_TOP,
         val isFullUrlEnabled: Boolean = true,
         val isTrackersCountInTabSwitcherEnabled: Boolean = true,
+        val shouldShowSplitOmnibarSettings: Boolean = true,
     )
 
     sealed class Command {
@@ -90,6 +93,8 @@ class AppearanceViewModel @Inject constructor(
             supportsForceDarkMode = WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING),
             isFullUrlEnabled = settingsDataStore.isFullUrlEnabled,
             omnibarType = settingsDataStore.omnibarType,
+            shouldShowSplitOmnibarSettings = browserFeatureFlags.useUnifiedOmnibarLayout().isEnabled() &&
+                browserFeatureFlags.splitOmnibar().isEnabled(),
         ),
     )
 
@@ -145,7 +150,7 @@ class AppearanceViewModel @Inject constructor(
         pixel.fire(pixelName)
     }
 
-    fun setOmnibarType(type: OmnibarType) {
+    fun onOmnibarTypeSelected(type: OmnibarType) {
         viewModelScope.launch(dispatcherProvider.io()) {
             settingsDataStore.omnibarType = type
             viewState.update { it.copy(omnibarType = type) }
